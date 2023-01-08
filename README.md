@@ -22,6 +22,3 @@ This project allows you to turn your ESP32 board into a Bluetooth A2DP music sin
 4. Start playing music and the track and artist information should be displayed on the OLED display. The device will shut down after 5 minutes of inactivity.
 
 ## Customization
-
-You can customize the following variables in the code:
-
