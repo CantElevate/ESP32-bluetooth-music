@@ -20,7 +20,7 @@ This project allows you to turn your ESP32 board into a Bluetooth A2DP music sin
 
 ## Usage
 
-1. Connect the OLED display to your ESP32 board according to the manufacturer's instructions. SDA/SCL on d22 and D21
+1. Connect the OLED display to your ESP32 board according to the manufacturer's instructions. SDA/SCL on d22 and d21
 2. Upload the code to your ESP32 board using the Arduino IDE.
 3. On your phone or computer, search for Bluetooth devices and connect to "MyMusic".
 4. Start playing music and the track and artist information should be displayed on the OLED display. The device will shut down after 5 minutes of inactivity.
