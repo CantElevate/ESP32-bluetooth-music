@@ -73,37 +73,13 @@ a2dp_sink.start(sinkName);
 }
 
 void loop() {
-  //check shutdown timer
-  if (millis()>shutdown_ms){
-  // stop the processor
-  Serial.println("Shutting down");
-  esp_deep_sleep_start();
-  }
-    // check state
-  esp_a2d_connection_state_t state = a2dp_sink.get_connection_state();
-  if (last_state != state) {
-    last_state = state;
-    if (state == ESP_A2D_CONNECTION_STATE_DISCONNECTED) {
-      // If disconnected, turn off the OLED display
-      display.clearDisplay();
-      display.display();
-      // Turn off the LED
-      digitalWrite(LED_BUILTIN, LOW);
-    } else if (state == ESP_A2D_CONNECTION_STATE_CONNECTED) {
-      // If connected, turn on the LED
-      digitalWrite(LED_BUILTIN, HIGH);
-    }
-  }
 
-
-// Check if there are any incoming Bluetooth connections
-  // Clear the display
-  display.clearDisplay();
-  // Set the text size and color
-  display.setTextSize(1);
-  display.setTextColor(WHITE);
-  // If there is a track and artist name, display them on the OLED
-  if (strlen(track) > 0 && strlen(artist) > 0) {
+   if (millis()>shutdown_ms){
+    // stop the processor
+    Serial.println("Shutting down");
+    esp_deep_sleep_start();
+  }
+  // Check if there are any incoming Bluetooth connections
     // Clear the display
     display.clearDisplay();
     // Set the text size and color
@@ -111,23 +87,18 @@ void loop() {
     display.setTextColor(WHITE);
     // Set the cursor position and print the track and artist information
     display.setCursor(0,0);
-    // Scroll the track name if it is longer than 11 characters
-    if (strlen(track) > 11) {
-      for (int i = 0; i < strlen(track) + 12; i++) {
-        display.clearDisplay();
-        display.setCursor(i, 0);
-        display.println(track);
-        display.println(artist);
-        display.display();
-        delay(200);
-      }
-    } else {
-      display.println(track);
-      display.println(artist);
-    }
+    display.println(track);
+    display.println(artist);
     // Update the display
     display.display();
-  }
-delay(1000);
-}
 
+    // check state
+  esp_a2d_connection_state_t state = a2dp_sink.get_connection_state();
+  if (last_state != state){
+    bool is_connected = state == ESP_A2D_CONNECTION_STATE_CONNECTED;
+    Serial.println(is_connected ? "Connected" : "Not connected");    
+    digitalWrite(LED_BUILTIN, is_connected);
+    last_state = state;
+  }
+  delay(1000);
+  }
