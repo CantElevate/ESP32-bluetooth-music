@@ -7,6 +7,10 @@ This project allows you to turn your ESP32 board into a Bluetooth A2DP music sin
 - ESP32 board
 - OLED display
 
+## Library Requirements
+- https://github.com/pschatzmann/ESP32-A2DP
+- https://github.com/adafruit/Adafruit_SSD1306
+
 ## Features
 
 - Connects to phone or computer as a Bluetooth A2DP sink
@@ -22,6 +26,3 @@ This project allows you to turn your ESP32 board into a Bluetooth A2DP music sin
 4. Start playing music and the track and artist information should be displayed on the OLED display. The device will shut down after 5 minutes of inactivity.
 
 ## Customization
-
-You can customize the following variables in the code:
-
