@@ -64,9 +64,7 @@ display.setTextColor(WHITE);
 display.setCursor(0,0);
 display.println("Initializing...");
 display.display();  
-
 a2dp_sink.set_i2s_config(i2s_config);  
-
 a2dp_sink.set_avrc_metadata_callback(avrc_metadata_callback);
 a2dp_sink.start(sinkName);  
 
@@ -91,7 +89,11 @@ void loop() {
     display.println(artist);
     // Update the display
     display.display();
-
+    if(strlen(track) >= 15){
+    display.startscrollright(0x00, 0x00);
+    } else {
+      display.stopscroll();
+    }
     // check state
   esp_a2d_connection_state_t state = a2dp_sink.get_connection_state();
   if (last_state != state){
