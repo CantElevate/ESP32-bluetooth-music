@@ -9,10 +9,17 @@
 
 const char sinkName[] = "MyMusic";
 
+// Pin numbers for the buttons
+const int playPauseButtonPin = 12;
+const int nextButtonPin = 14;
+const int prevButtonPin = 27;
+
 Adafruit_SSD1306 display(OLED_RESET);
 BluetoothA2DPSink a2dp_sink;
+esp_a2d_connection_state_t state;
 esp_a2d_connection_state_t last_state;
-uint16_t minutes = 5;
+
+uint16_t minutes = 60;
 unsigned long shutdown_ms = millis() + 1000 * 60 * minutes;
 
 char track[50];
@@ -53,31 +60,49 @@ Serial.printf("AVRC metadata rsp: attribute id 0x%x, %s\n", data1, data2);
 } 
 
 void setup() {
-  Serial.begin(115200);
-// LED for connection
-pinMode(LED_BUILTIN, OUTPUT);
-// Initialize the OLED display
-display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-display.clearDisplay();
-display.setTextSize(1);
-display.setTextColor(WHITE);
-display.setCursor(0,0);
-display.println("Initializing...");
-display.display();  
-a2dp_sink.set_i2s_config(i2s_config);  
-a2dp_sink.set_avrc_metadata_callback(avrc_metadata_callback);
-a2dp_sink.start(sinkName);  
+    Serial.begin(115200);
+  // LED for connection
+  pinMode(LED_BUILTIN, OUTPUT);
+  // Initialize the OLED display
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0,0);
+  display.println("Initializing...");
+  display.display();  
+  a2dp_sink.set_i2s_config(i2s_config);  
+  a2dp_sink.set_avrc_metadata_callback(avrc_metadata_callback);
+  a2dp_sink.start(sinkName);  
+
+    // Set the pin mode for the buttons
+  pinMode(playPauseButtonPin, INPUT_PULLUP);
+  pinMode(nextButtonPin, INPUT_PULLUP);
+  pinMode(prevButtonPin, INPUT_PULLUP);
 
 }
 
 void loop() {
-
-   if (millis()>shutdown_ms){
-    // stop the processor
-    Serial.println("Shutting down");
-    esp_deep_sleep_start();
+  // Check the state of the play button
+  if(digitalRead(playPauseButtonPin) == LOW){
+    if (a2dp_sink.get_audio_state() == 2) {
+      a2dp_sink.pause();
+    } else {
+      a2dp_sink.play();
+    }
+    delay(50);
   }
-  // Check if there are any incoming Bluetooth connections
+   // Check the state of the next track button
+  if (digitalRead(nextButtonPin) == LOW) {
+    a2dp_sink.next();
+    delay(50);
+  }
+  // Check the state of the previous track button
+  if (digitalRead(prevButtonPin) == LOW) {
+    a2dp_sink.previous();
+    delay(50);
+  }
+    // Check if there are any incoming Bluetooth connections
     // Clear the display
     display.clearDisplay();
     // Set the text size and color
@@ -102,5 +127,10 @@ void loop() {
     digitalWrite(LED_BUILTIN, is_connected);
     last_state = state;
   }
-  delay(1000);
+     if (millis()>shutdown_ms){
+    // stop the processor
+    Serial.println("Shutting down");
+    esp_deep_sleep_start();
+  }
+  delay(50);
   }
